@@ -1,35 +1,51 @@
 package az.dsa.dsaBackend.service;
 
+
 import az.dsa.dsaBackend.dto.ApplicationDto;
 import az.dsa.dsaBackend.entity.Application;
 import az.dsa.dsaBackend.mapper.ApplicationMapper;
 import az.dsa.dsaBackend.repository.ApplicationRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ApplicationService {
     private final ApplicationRepository applicationRepository;
-    private final ApplicationMapper applicationMapper = ApplicationMapper.INSTANCE;
+    private final ApplicationMapper applicationMapper;
 
-    public ApplicationService(ApplicationRepository applicationRepository) {
-        this.applicationRepository = applicationRepository;
-    }
+    public ApplicationDto createApplication(ApplicationDto applicationDto) {
+        if (applicationRepository.findByEmail(applicationDto.getEmail()).isPresent()) {
+            throw new DataIntegrityViolationException("Email artıq mövcuddur!");
+        }
+        if (applicationRepository.findByTelefon(applicationDto.getTelefon()).isPresent()) {
+            throw new DataIntegrityViolationException("Telefon nömrəsi artıq mövcuddur!");
+        }
 
-    public List<ApplicationDto> getAllApplications() {
-        return applicationRepository.findAll()
-                .stream()
-                .map(applicationMapper::toDto)
-                .collect(Collectors.toList());
-    }
-
-    public ApplicationDto saveApplication(ApplicationDto applicationDto) {
         Application application = applicationMapper.toEntity(applicationDto);
-        Application savedApplication = applicationRepository.save(application);
-        return applicationMapper.toDto(savedApplication);
+        application = applicationRepository.save(application);
+        log.info("Yeni Application yaradıldı: {}", application);
+        return applicationMapper.toDto(application);
+    }
+
+    public Page<ApplicationDto> getAllApplications(Pageable pageable) {
+
+        return applicationRepository.findAll(pageable).map(applicationMapper::toDto);
+    }
+
+    public ApplicationDto getApplicationById(Long id) {
+        return applicationRepository.findById(id)
+                .map(applicationMapper::toDto)
+                .orElseThrow(() -> new EntityNotFoundException("Application tapılmadı! ID: " + id));
     }
 }
+
 
 

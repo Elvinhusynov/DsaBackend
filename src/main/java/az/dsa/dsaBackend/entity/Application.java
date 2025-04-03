@@ -1,15 +1,18 @@
 package az.dsa.dsaBackend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table(name = "application")
+@Table(name = "applications")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 
 public class Application {
     @Id
@@ -18,7 +21,12 @@ public class Application {
 
     private String ad;
     private String soyad;
+
+    @Column(nullable = false, unique = true)
+    @Email
     private String email;
+
+    @Column(nullable = false, unique = true)
     private String telefon;
 
     @Column(name = "created_at", updatable = false)
@@ -38,5 +46,7 @@ public class Application {
         modifiedAt = LocalDateTime.now();
     }
 }
+
+
 
 
