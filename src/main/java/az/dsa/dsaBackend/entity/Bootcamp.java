@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class Bootcamp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "bootcamps_id")
     private Long bootcampsId;
 
     private String bootcampsType;
