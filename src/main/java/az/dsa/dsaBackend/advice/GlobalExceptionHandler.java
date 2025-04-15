@@ -47,12 +47,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGlobalExceptions(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("An unexpected error occurred: " + ex.getMessage());
-    }
-
     @ExceptionHandler(ContactNotFoundException.class)
     public ResponseEntity<String> handleContactNotFound(ContactNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
