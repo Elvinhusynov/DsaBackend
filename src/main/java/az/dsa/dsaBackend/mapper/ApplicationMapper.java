@@ -8,6 +8,7 @@ import org.mapstruct.Mapper;
 public interface ApplicationMapper {
 
     ApplicationDto toDto(Application entity);
+
     Application toEntity(ApplicationDto dto);
 
 }
